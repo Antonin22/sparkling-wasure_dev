@@ -48,7 +48,7 @@ Results will be stored in the `./output_examples/` directory.
 
 ### Run on LiDAR HD  dataset 
 To run the code on a LiDAR HD tile collection : 
-  - Go to [LiDAR HD dataset](https://geoservices.ign.fr/lidarhd), select a set of adjacent tiles and download the `liste_dalle.txt` file containing the list of laz file here : `./datas/liste_dalle.txt`.
+  - Go to [LiDAR HD dataset](https://cartes.gouv.fr/telechargement/IGNF_NUAGES-DE-POINTS-LIDAR-HD), select a set of adjacent tiles and download the `liste_dalle.txt` file containing the list of laz file here : `./datas/liste_dalle.txt`.
 then run 
 
 ```console
@@ -57,7 +57,31 @@ then run
 ```
 
 The result will be stored in the `./lidarhd_project/outputs/` directory.
-You can tune the algorithm by passing xml file parameters to the `run_lidarhd.sh` script with the `--params` option (see the advanced option part).
+You can tune the algorithm by passing xml file parameters to the `run_lidarhd.sh` script with the `--params`.
+
+For example, a 37-tile mesh was created with the following configuration on a computer with 64 cores and 500GB of RAM (1 day of computation):
+
+```xml
+<?xml version="1.0"?>
+<env>
+  <datasets>
+    <austin>
+      <dim>3</dim>
+      <ndtree_depth>8</ndtree_depth>
+      <max_ppt>2000000</max_ppt>
+      <mode>1</mode>
+    </austin>
+  </datasets>
+</env>
+```
+The `ndtree_depth` is set to 8, and the maximum number of points per tile is set to `2000000`. To speed up the computation, try increasing the number of points per tile as much as possible.
+Reducing the maximum depth of the ndtree will also speed up computation and reduce approximation errors (improving the mesh quality).
+⚠️  Increasing the maximum number of points per tile will require more memory ⚠️
+To use this with the previous example: save it in the input directory `${PWD}/lidarhd_project/inputs/wasure_metadata.xml`, then run.
+
+```console
+./run_lidarhd.sh --input_dir ${PWD}/lidarhd_project/inputs/ --output_dir ${PWD}/lidarhd_project/outputs/ --colorize --params ${PWD}/lidarhd_project/inputs/wasure_metadata.xml
+```
 
 
 ## Output format
@@ -190,7 +214,7 @@ The code will be executed with the local build => good for coding / debugging.
 
 # Todos
 - ☐ Improving line of sight estimation
-- ☐ Improving / speed up the coloring scheme
+- ☐ Improving / speed up the coloring scheme (actually not working well on tiles intersection)
 - ☐ Improving surface reconstruction score function with state of the art approach.
 
 # Contributors 
