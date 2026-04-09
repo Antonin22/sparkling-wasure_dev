@@ -5,12 +5,27 @@ channels:
 dependencies:
   - python=3.10
   - pip
+  - numpy
+  - setuptools
   - pip:
       - pymeshlab==2021.10
       - matplotlib
-      - numpy
       - pandas
       - pyproj
       - plyfile
       - trimesh
-      - git+https://github.com/VCityTeam/py3dtilers
+      - networkx
+      - psycopg2-binary
+      - pywavefront
+      - pyyaml
+      - scipy
+      - shapely
+      - alphashape
+      - Pillow
+      - laspy
+      - psutil
+      - lz4
+      - pyzmq
+      - jsonschema
+      - triangle
+      - cython

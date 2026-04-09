@@ -83,8 +83,22 @@ COPY services/mesh23dtile/environment.yml /tmp/environment_mesh23Dtile.yml
 COPY services/extern/ign-pdal-tools/environment.yml /tmp/environment_ign_pdal_tools.yml
 # ENV PYTHONPATH=/app/wasure/services/extern/ign-pdal-tools:$PYTHONPATH
 ENV PYTHONPATH=/app/wasure/services/extern/ign-pdal-tools
+# Accepter les CGU Anaconda
+RUN conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main && \
+    conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r
+
 # Créer le premier environnement Conda (mesh23Dtile)
-RUN conda env create -f /tmp/environment_mesh23Dtile.yml && conda clean -a
+# py3dtilers@v1.2.0 requiert numpy<1.21 (pas de wheel Python 3.10) et py3dtiles@Tiler.
+# On installe avec --no-deps pour éviter le conflit numpy, puis les dépendances manuellement.
+COPY src/docker/patch_py3dtilers.py /tmp/patch_py3dtilers.py
+RUN conda env create -f /tmp/environment_mesh23Dtile.yml && \
+    conda run -n mesh23Dtile pip install --no-deps \
+        "py3dtiles @ git+https://github.com/VCityTeam/py3dtiles@Tiler" \
+        "git+https://github.com/VCityTeam/py3dtilers@v1.2.0" \
+        "earclip @ git+https://github.com/lionfish0/earclip" && \
+    conda run -n mesh23Dtile pip install "setuptools==69.5.1" && \
+    conda run -n mesh23Dtile python3 /tmp/patch_py3dtilers.py && \
+    conda clean -a
 
 # Créer le deuxième environnement Conda (ign-pdal-tools)
 RUN conda env create -f /tmp/environment_ign_pdal_tools.yml && conda clean -a

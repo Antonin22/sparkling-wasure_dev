@@ -32,14 +32,14 @@ fi
 
 function run_cmd_container
 {
-
+    TTY_FLAG=""; [ -t 0 ] && TTY_FLAG="-t"
     OUTPUT_ROOT=$(dirname ${OUTPUT_DIR})/
     CMD_DOCKER="docker run  \
        -u 0 \
        -v ${INPUT_DIR}:${INPUT_DIR} -v ${OUTPUT_ROOT}:${OUTPUT_ROOT} ${MOUNT_LOCAL} \
        -v ${TMP_DIR}:${TMP_DIR} \
        --rm \
-       -it \
+       -i ${TTY_FLAG} \
        -e NAME_IMG_BASE=${NAME_IMG_BASE} -e DDT_MAIN_DIR_DOCKER=${DDT_MAIN_DIR_DOCKER} \
        -e CONTAINER_NAME_SHELL=${CONTAINER_NAME_SHELL} -e CONTAINER_NAME_COMPILE=${CONTAINER_NAME_COMPILE} \
        -e TMP_DIR=${TMP_DIR} -e SPARK_TMP_DIR=${SPARK_TMP_DIR} -e SPARK_HISTORY_DIR=${SPARK_HISTORY_DIR} \
